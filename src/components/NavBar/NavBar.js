@@ -1,108 +1,99 @@
-import React, { useState} from "react";
+import { useDemoLanguage, DemoLanguageSwitcher } from "../../i18n/DemoLanguage";
+import React, { useState } from "react";
 import { Link, useLocation } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Menu, X, ShoppingCart } from 'lucide-react';
-import './NavBar.css';
 import Logo from '../../assets/logos/lg1.jpg';
-
-export const NavBar = ({ cartItemCount }) => {
+export const NavBar = ({
+  cartItemCount
+}) => {
+  const {
+    tr
+  } = useDemoLanguage();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const location = useLocation();
-
-  const navItems = [
-    { path: '/', label: 'Home' },
-    { path: '/Store', label: 'Store' },
-    { path: '/aboutus', label: 'About Us' },
-    { path: '/location', label: 'Location' },
-  ];
-
-
-  return (
-    <header className="navbar">
+  const navItems = [{
+    path: '/',
+    label: 'Home'
+  }, {
+    path: '/Store',
+    label: 'Store'
+  }, {
+    path: '/aboutus',
+    label: 'About Us'
+  }, {
+    path: '/location',
+    label: 'Location'
+  }];
+  return <header className="navbar">
       <div className="navbar-container">
+      <DemoLanguageSwitcher />
         <Link to="/" className="logo-container">
-          <img src={Logo} alt="Logo" className="logo" />
+          <img src={Logo} alt={tr("Logo")} className="logo" />
         </Link>
 
-        {/* Desktop Navigation */}
+        {
+        /* Desktop Navigation */
+      }
         <nav className="desktop-nav">
-          {navItems.map((item) => (
-            <Link
-              key={item.path}
-              to={item.path}
-              className={`nav-link ${location.pathname === item.path ? 'active' : ''}`}
-            >
-              {item.label}
-            </Link>
-          ))}
-          {/* Desktop Cart */}
+          {navItems.map(item => {
+          return <Link key={item.path} to={item.path} className={`nav-link ${location.pathname === item.path ? 'active' : ''}`}>
+              {tr(item.label)}
+            </Link>;
+        })}
+          {
+          /* Desktop Cart */
+        }
           <Link to="/cart" className="cart-icon-container desktop-cart">
             <ShoppingCart size={24} />
-            {cartItemCount > 0 && (
-              <span className="cart-counter">{cartItemCount}</span>
-            )}
+            {cartItemCount > 0 && <span className="cart-counter">{cartItemCount}</span>}
           </Link>
         </nav>
 
-        {/* Mobile Menu Toggle */}
+        {
+        /* Mobile Menu Toggle */
+      }
         <div className="nav-buttons">
           <Link to="/cart" className="cart-icon-container mobile-cart">
             <ShoppingCart size={24} />
-            {cartItemCount > 0 && (
-              <span className="cart-counter">{cartItemCount}</span>
-            )}
+            {cartItemCount > 0 && <span className="cart-counter">{cartItemCount}</span>}
           </Link>
-          <button 
-            className="menu-toggle"
-            onClick={() => setIsMenuOpen(!isMenuOpen)}
-            aria-label="Toggle menu"
-          >
+          <button className="menu-toggle" onClick={() => setIsMenuOpen(!isMenuOpen)} aria-label={tr("Toggle menu")}>
             {isMenuOpen ? <X size={24} /> : <Menu size={24} />}
           </button>
         </div>
 
-        {/* Mobile Menu */}
+        {
+        /* Mobile Menu */
+      }
         <AnimatePresence>
-          {isMenuOpen && (
-            <>
-              <motion.div 
-                className="nav-overlay"
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                exit={{ opacity: 0 }}
-                onClick={() => setIsMenuOpen(false)}
-              />
-              <motion.div 
-                className="nav-menu"
-                initial={{ x: '100%' }}
-                animate={{ x: 0 }}
-                exit={{ x: '100%' }}
-              >
-                {navItems.map((item) => (
-                  <Link
-                    key={item.path}
-                    to={item.path}
-                    className="nav-item"
-                    onClick={() => setIsMenuOpen(false)}
-                  >
-                    {item.label}
-                  </Link>
-                ))}
-                <Link
-                  to="/cart"
-                  className="nav-item cart-item"
-                  onClick={() => setIsMenuOpen(false)}
-                >
-                  <ShoppingCart size={20} />
-                  Cart {cartItemCount > 0 && `(${cartItemCount})`}
+          {isMenuOpen && <>
+              <motion.div className="nav-overlay" initial={{
+            opacity: 0
+          }} animate={{
+            opacity: 1
+          }} exit={{
+            opacity: 0
+          }} onClick={() => setIsMenuOpen(false)} />
+              <motion.div className="nav-menu" initial={{
+            x: '100%'
+          }} animate={{
+            x: 0
+          }} exit={{
+            x: '100%'
+          }}>
+                {navItems.map(item => {
+              return <Link key={item.path} to={item.path} className="nav-item" onClick={() => setIsMenuOpen(false)}>
+                    {tr(item.label)}
+                  </Link>;
+            })}
+                <Link to="/cart" className="nav-item cart-item" onClick={() => setIsMenuOpen(false)}>
+                  <ShoppingCart size={20} />{tr("Cart")}{" "}{cartItemCount > 0 && `(${cartItemCount})`}
                 </Link>
               </motion.div>
-            </>
-          )}
+            </>}
         </AnimatePresence>
       </div>
-    </header>
-  );
+    </header>;
 };
-
 export default NavBar;

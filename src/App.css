@@ -316,3 +316,14 @@
     font-size: 0.7rem;
   }
 }
+
+/* Boutique concept layout */
+*, *::before, *::after { box-sizing: border-box; }
+:root { --navbar-height:100px; }
+.main-content { max-width:none; padding:0; }
+.cart-container { max-width:1100px; margin:40px auto; padding:30px 6%; }
+.cart-container p { line-height:1.8; }
+.cart-container button { cursor:pointer; }
+@media(max-width:700px) { .cart-item { flex-wrap:wrap; } .cart-item-details { min-width:0; } }
+
+.store-container{background:#fcfaf6!important;padding:60px 6%!important;max-width:1400px!important}.store-title{font:400 clamp(36px,5vw,60px)/1.1 Georgia,serif!important;color:#493e36!important}.store-item-card{border-radius:0!important;box-shadow:none!important;border:1px solid #e1d9cc!important;background:#fcfaf6!important}.store-item-info h3{font-family:Georgia,serif!important}.store-modal-content{border-radius:0!important;background:#fcfaf6!important}.store-image-container{background:#eee8df!important}.store-modal-buy-button,.add-to-cart-button{background:#655541!important;color:#fff!important}.cocoon-about{max-width:1250px;min-height:65vh;margin:auto;padding:70px 6%;display:grid;grid-template-columns:1.2fr 1fr;gap:65px;align-items:center;color:#493e36;background:#fcfaf6}.cocoon-about h1{font:400 clamp(40px,5vw,70px)/1.08 Georgia,serif}.cocoon-about p{line-height:1.9}.cocoon-about img{width:100%;max-height:550px;object-fit:cover;border-radius:45% 45% 0 0}@media(max-width:700px){.cocoon-about{grid-template-columns:1fr;padding:45px 6%;gap:30px}}@media(prefers-reduced-motion:reduce){*,*:before,*:after{animation:none!important;transition:none!important}}

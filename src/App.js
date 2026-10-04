@@ -18,20 +18,13 @@ export const App = () => {
   const location = useLocation();
 
   const addToCart = (art) => {
-    // Check if item already exists in cart
-    const existingItem = cart.find(item => item.id === art.id);
-    
-    if (existingItem) {
-      // If item exists, update quantity
-      setCart(cart.map(item =>
-        item.id === art.id
-          ? { ...item, quantity: (item.quantity || 1) + 1 }
-          : item
-      ));
-    } else {
-      // If item doesn't exist, add it with quantity 1
-      setCart(prev => [...prev, { ...art, id: Date.now(), quantity: 1 }]);
-    }
+    const id = JSON.stringify([art.id, art.selectedSize || '', art.selectedColor || '']);
+    setCart(previous => {
+      const exists = previous.some(item => item.id === id);
+      return exists
+        ? previous.map(item => item.id === id ? { ...item, quantity: item.quantity + 1 } : item)
+        : [...previous, { ...art, productId: art.id, id, quantity: 1 }];
+    });
 
     // Show notification
     setShowNotification(true);
@@ -41,7 +34,7 @@ export const App = () => {
   };
 
   const removeFromCart = (id) => {
-    setCart(cart.filter(item => item.id !== id));
+    setCart(previous => previous.filter(item => item.id !== id));
   };
 
   const updateQuantity = (id, newQuantity) => {
@@ -49,7 +42,7 @@ export const App = () => {
       removeFromCart(id);
       return;
     }
-    setCart(cart.map(item =>
+    setCart(previous => previous.map(item =>
       item.id === id ? { ...item, quantity: newQuantity } : item
     ));
   };

@@ -316,3 +316,12 @@
     font-size: 0.7rem;
   }
 }
+
+/* Boutique concept layout */
+*, *::before, *::after { box-sizing: border-box; }
+:root { --navbar-height:100px; }
+.main-content { max-width:none; padding:0; }
+.cart-container { max-width:1100px; margin:40px auto; padding:30px 6%; }
+.cart-container p { line-height:1.8; }
+.cart-container button { cursor:pointer; }
+@media(max-width:700px) { .cart-item { flex-wrap:wrap; } .cart-item-details { min-width:0; } }

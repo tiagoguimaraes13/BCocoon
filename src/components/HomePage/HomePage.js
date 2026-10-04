@@ -1,77 +1,15 @@
 import React from 'react';
-import { useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import './HomePage.css';
-import bannerImage from '../../assets/logos/banner.webp';
-
-// Import your product images
-import product1Image from '../../assets/Bbloomers/bk3.png';
-import product2Image from '../../assets/Doudou/dd1.jpg';
-import product3Image from '../../assets/Bshoes/bs1.jpg';
-
-const TopSellingProduct = ({ title, price, image }) => (
-  <div className="product-card">
-    <div className="product-info">
-      <div className="product-image-container">
-        <img
-          src={image}
-          alt={title}
-          className="product-image"
-        />
-      </div>
-      <h3 className="product-title">{title}</h3>
-      <p className="product-price">{price}€</p>
-    </div>
-  </div>
-);
-
+import hero from '../../assets/Bbloomers/bk3.png';
+import doudou from '../../assets/Doudou/dd1.jpg';
+import shoes from '../../assets/Bshoes/bs1.jpg';
+const products = [{name:'Baby Bloomers', image:hero}, {name:'Baby Animal Doudou', image:doudou}, {name:'Baby Shoes', image:shoes}];
 export function HomePage() {
-  const navigate = useNavigate();
-
-  const handleStoreClick = () => {
-    navigate('/store');
-  };
-
-  const topProducts = [
-    { id: 1, title: "Baby Bloomers", price: "46", image: product1Image },
-    { id: 2, title: "Baby Animal Doudou", price: "32", image: product2Image },
-    { id: 3, title: "Baby Shoes", price: "36", image: product3Image },
-  ];
-
-  return (
-    <div className="container">
-      {/* Banner Section */}
-      <div className="banner-section">
-        <img
-          src={bannerImage}
-          alt="Baby Clothes Store Banner"
-          className="banner-image"
-        />
-      </div>
-
-      {/* Top Selling Products Section */}
-      <section className="products-section">
-        <h2 className="section-title">Most Popular Items</h2>
-        <div className="products-grid">
-          {topProducts.map((product) => (
-            <TopSellingProduct
-              key={product.id}
-              title={product.title}
-              price={product.price}
-              image={product.image}
-            />
-          ))}
-        </div>
-      </section>
-
-      {/* CTA Button */}
-      <div className="cta-section">
-        <button 
-          className="cta-button"
-          onClick={handleStoreClick}
-        >
-          Go to Store
-        </button>
-      </div>
-    </div>
-  );
+  return <div className="cocoon-home">
+    <div className="cocoon-concept">Independent website concept by TOIMU · This demo does not accept orders.</div>
+    <section className="cocoon-hero"><div><p className="cocoon-eyebrow">B.COCOON KIDS / THE LITTLE THINGS</p><h1>Little pieces.<br />Lovely beginnings.</h1><p>A softer world of baby clothing, keepsakes and thoughtful gifts.</p><Link className="cocoon-button" to="/store">Explore the collection ↗</Link><span className="cocoon-caption">A boutique shopping experience, reimagined.</span></div><img src={hero} alt="Baby bloomers in a woven basket" fetchPriority="high" /></section>
+    <section className="cocoon-collection"><div className="cocoon-heading"><div><p className="cocoon-eyebrow">THE COLLECTION</p><h2>Small things to treasure.</h2></div><Link to="/store">View all pieces →</Link></div><div className="cocoon-grid">{products.map(product => <Link to="/store" className="cocoon-product" key={product.name}><img src={product.image} alt={product.name} loading="lazy" /><h3>{product.name}</h3><span>Discover colours & options →</span></Link>)}</div></section>
+    <section className="cocoon-story"><p className="cocoon-eyebrow">A LITTLE MORE THOUGHTFUL</p><h2>For first moments.<br />And lasting memories.</h2><p>Explore the story behind the collection and find a little inspiration for your next gift.</p><Link to="/aboutus">Discover B.Cocoon →</Link></section>
+  </div>;
 }

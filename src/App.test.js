@@ -1,168 +1,32 @@
-import { render, screen, fireEvent, waitFor } from '@testing-library/react';
-import userEvent from '@testing-library/user-event';
-import { BrowserRouter } from 'react-router-dom';
+import { render, screen, fireEvent } from '@testing-library/react';
+import { MemoryRouter } from 'react-router-dom';
 import App from './App';
 
-// Mock child components
-jest.mock('./components/Homepage', () => () => <div data-testid="homepage">Homepage</div>);
-jest.mock('./components/OurArt', () => ({ addToCart }) => (
-  <div data-testid="our-art">
-    OurArt
-    <button onClick={() => addToCart({ name: 'Test Art', price: 100 })}>Add to Cart</button>
-  </div>
-));
-jest.mock('./components/Location', () => () => <div data-testid="location">Location</div>);
-jest.mock('./components/Cart', () => ({ cart, removeFromCart }) => (
-  <div data-testid="cart">
-    Cart Items: {cart.length}
-    <button onClick={() => removeFromCart(0)}>Remove Item</button>
-  </div>
-));
+jest.mock('./components/NavBar/NavBar', () => { const {Link} = require('react-router-dom'); return {NavBar: () => <nav><Link to="/store">Store</Link><Link to="/cart">Basket</Link></nav>}; });
+jest.mock('./components/Store/Store', () => ({Store: ({addToCart}) => <><button onClick={() => addToCart({id:1,name:'Bloomers',price:46,selectedSize:'Small',selectedColor:'Cream'})}>Add small</button><button onClick={() => addToCart({id:1,name:'Bloomers',price:46,selectedSize:'Large',selectedColor:'Cream'})}>Add large</button></>}));
+jest.mock('framer-motion', () => ({AnimatePresence: ({children}) => <>{children}</>, motion:{div: ({children}) => <div>{children}</div>}}));
 
-// Wrapper component for tests
-const renderWithRouter = (component) => {
-  return render(<BrowserRouter>{component}</BrowserRouter>);
-};
-
-describe('App Component', () => {
-  // Navigation Tests
-  describe('Navigation', () => {
-    test('renders navigation links', () => {
-      renderWithRouter(<App />);
-
-      expect(screen.getByText(/homepage/i)).toBeInTheDocument();
-      expect(screen.getByText(/ourart/i)).toBeInTheDocument();
-      expect(screen.getByText(/about us/i)).toBeInTheDocument();
-    });
-
-    test('navigates to different pages', async () => {
-      renderWithRouter(<App />);
-
-      // Navigate to OurArt
-      const artLink = screen.getByText(/ourart/i);
-      fireEvent.click(artLink);
-      expect(screen.getByTestId('our-art')).toBeInTheDocument();
-
-      // Navigate to Location
-      const locationLink = screen.getByText(/about us/i);
-      fireEvent.click(locationLink);
-      expect(screen.getByTestId('location')).toBeInTheDocument();
-    });
-  });
-
-  // Cart Functionality Tests
-  describe('Cart Operations', () => {
-    test('adds item to cart', async () => {
-      renderWithRouter(<App />);
-
-      // Navigate to OurArt
-      const artLink = screen.getByText(/ourart/i);
-      fireEvent.click(artLink);
-
-      // Add item to cart
-      const addButton = screen.getByText(/add to cart/i);
-      fireEvent.click(addButton);
-
-      // Check cart badge
-      const cartBadge = screen.getByText('1');
-      expect(cartBadge).toBeInTheDocument();
-    });
-
-    test('removes item from cart', async () => {
-      renderWithRouter(<App />);
-
-      // Add item and navigate to cart
-      const artLink = screen.getByText(/ourart/i);
-      fireEvent.click(artLink);
-      const addButton = screen.getByText(/add to cart/i);
-      fireEvent.click(addButton);
-
-      // Navigate to cart
-      const cartLink = screen.getByTestId('cart');
-      fireEvent.click(cartLink);
-
-      // Remove item
-      const removeButton = screen.getByText(/remove item/i);
-      fireEvent.click(removeButton);
-
-      // Check cart is empty
-      expect(screen.queryByText('1')).not.toBeInTheDocument();
-    });
-  });
-
-  // UI Element Tests
-  describe('UI Elements', () => {
-    test('renders logo', () => {
-      renderWithRouter(<App />);
-      const logo = screen.getByAltText(/logo/i);
-      expect(logo).toBeInTheDocument();
-    });
-
-    test('shows mobile menu on small screens', () => {
-      // Mock window resize
-      global.innerWidth = 500;
-      global.dispatchEvent(new Event('resize'));
-
-      renderWithRouter(<App />);
-      const menuButton = screen.getByRole('button', { name: /menu/i });
-      expect(menuButton).toBeInTheDocument();
-    });
-  });
-
-  // Animation and Interaction Tests
-  describe('Animations and Interactions', () => {
-    test('scrolls to top when button clicked', async () => {
-      renderWithRouter(<App />);
-
-      // Mock scroll position
-      global.scrollY = 1000;
-      global.dispatchEvent(new Event('scroll'));
-
-      // Click scroll to top button
-      const scrollButton = await screen.findByRole('button', { name: /scroll to top/i });
-      fireEvent.click(scrollButton);
-
-      // Verify scroll behavior
-      expect(window.scrollTo).toHaveBeenCalledWith({
-        top: 0,
-        behavior: 'smooth',
-      });
-    });
-  });
-
-  // Error Handling Tests
-  describe('Error Handling', () => {
-    test('shows error notification on failed cart operation', async () => {
-      renderWithRouter(<App />);
-
-      // Mock failed cart operation
-      jest.spyOn(console, 'error').mockImplementation(() => {});
-
-      // Trigger error
-      const artLink = screen.getByText(/ourart/i);
-      fireEvent.click(artLink);
-
-      const addButton = screen.getByText(/add to cart/i);
-      fireEvent.click(addButton);
-
-      // Check for error notification
-      await waitFor(() => {
-        expect(screen.getByText(/error adding to cart/i)).toBeInTheDocument();
-      });
-    });
-  });
-
-  // Performance Tests
-  describe('Performance', () => {
-    test('lazy loads components', async () => {
-      renderWithRouter(<App />);
-
-      // Navigate to different routes
-      const artLink = screen.getByText(/ourart/i);
-      fireEvent.click(artLink);
-
-      // Verify loading state
-      expect(screen.getByTestId('our-art')).toBeInTheDocument();
-    });
-  });
+function openStore() { render(<MemoryRouter initialEntries={['/store']}><App /></MemoryRouter>); }
+test('repeated matching options merge into one basket line and quantities total correctly', () => {
+  openStore(); fireEvent.click(screen.getByText('Add small')); fireEvent.click(screen.getByText('Add small')); fireEvent.click(screen.getAllByRole('link',{name:'Basket'})[0]);
+  expect(screen.getAllByRole('heading',{name:'Bloomers'})).toHaveLength(1);
+  expect(screen.getByLabelText('Quantity')).toHaveTextContent('2');
+  fireEvent.click(screen.getByRole('button',{name:'Decrease quantity of Bloomers'}));
+  expect(screen.getByLabelText('Quantity')).toHaveTextContent('1');
+  fireEvent.click(screen.getByRole('button',{name:'Preview order'}));
+  expect(screen.getByRole('status')).toHaveTextContent('1 items · €46.00');
+  expect(screen.queryByLabelText(/card number/i)).not.toBeInTheDocument();
+});
+test('different sizes remain separate and removing one preserves the other', () => {
+  openStore(); fireEvent.click(screen.getByText('Add small')); fireEvent.click(screen.getByText('Add large')); fireEvent.click(screen.getAllByRole('link',{name:'Basket'})[0]);
+  expect(screen.getAllByRole('heading',{name:'Bloomers'})).toHaveLength(2);
+  fireEvent.click(screen.getAllByRole('button',{name:'Remove Bloomers'})[0]);
+  expect(screen.getAllByRole('heading',{name:'Bloomers'})).toHaveLength(1);
+  expect(screen.getByText('Large · Cream')).toBeInTheDocument();
+});
+test('decreasing the last item to zero shows the empty state without checkout', () => {
+  openStore(); fireEvent.click(screen.getByText('Add small')); fireEvent.click(screen.getAllByRole('link',{name:'Basket'})[0]);
+  fireEvent.click(screen.getByRole('button',{name:'Decrease quantity of Bloomers'}));
+  expect(screen.getByText('Your basket is empty.')).toBeInTheDocument();
+  expect(screen.queryByRole('button',{name:'Preview order'})).not.toBeInTheDocument();
 });

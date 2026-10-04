@@ -573,7 +573,7 @@ const artworks = [
   const handleOpenModal = (art) => {
     setSelectedArt(art);
     setCurrentImageIndex(0);
-    setSelectedSize(null);
+    setSelectedSize(art.dimensions ? null : 'One size');
     setSelectedColor(null);
     setOpenSection(null);
   };
@@ -760,9 +760,9 @@ const artworks = [
         ))
       : <button
           className={`size-button ${selectedSize === selectedArt.dimensions ? 'selected' : ''}`}
-          onClick={() => setSelectedSize(selectedArt.dimensions)}
+          onClick={() => setSelectedSize(selectedArt.dimensions || 'One size')}
         >
-          {selectedArt.dimensions}
+          {selectedArt.dimensions || 'One size'}
         </button>
     }
   </div>

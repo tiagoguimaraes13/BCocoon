@@ -1,3 +1,4 @@
+import './Store.css';
 import { useDemoLanguage } from "../../i18n/DemoLanguage";
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
